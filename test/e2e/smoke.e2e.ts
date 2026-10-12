@@ -86,6 +86,21 @@ async function command(id: string): Promise<void> {
 	await browser.executeObsidianCommand(id);
 }
 
+/** The service uses Electron for window sizing because Obsidian omits the browser window CDP command. */
+async function windowSize(): Promise<[number, number]> {
+	return browser.execute(() => {
+		const host = window as unknown as { electron: { remote: { getCurrentWindow(): { getSize(): [number, number] } } } };
+		return host.electron.remote.getCurrentWindow().getSize();
+	}) as Promise<[number, number]>;
+}
+
+async function resizeWindow(width: number, height: number): Promise<void> {
+	await browser.execute((w, h) => {
+		const host = window as unknown as { electron: { remote: { getCurrentWindow(): { setSize(width: number, height: number): void } } } };
+		host.electron.remote.getCurrentWindow().setSize(w, h);
+	}, width, height);
+}
+
 /** Waits until the metadata cache knows the headings of a note. Folding a section needs them. */
 async function waitHeadings(path: string, count: number): Promise<void> {
 	await browser.waitUntil(
@@ -211,6 +226,47 @@ describe(`${pluginId} in the real app`, function () {
 		const a = await waitSnapshot((x) => x.gutter[2]?.[0] === '3', 'absolute numbers');
 		expect(a.gutter.map((g) => g[0])).toEqual(a.gutter.map((_, i) => String(i + 1)));
 		expect(a.gutter[2]!.slice(1).every((t) => t === '')).toBe(true);
+	});
+
+	it('dual mode has document numbers and display row distances, and the mode commands include it', async function () {
+		await setSponsor('signed-out');
+		await configure(FREE);
+		await obsidianPage.openFile(LONG);
+		await setCursorLine(2);
+		await command(`${pluginId}:mode-dual`);
+		const measured = (s: Snapshot) => s.gutter.length === s.lines.length && s.gutter.every((rows, i) => rows.length === s.lines[i]);
+		const a = await waitSnapshot((x) => x.gutter[2]?.[0] === '3 | 0' && measured(x), 'dual cursor row after wrap measurement');
+		const expected = (s: Snapshot, cursorLine: number) => expectedRelative(s.lines, cursorLine).map((rows, i) => rows.map((distance, j) => `${j === 0 ? i + 1 : ''} | ${distance}`));
+		expect(Math.max(...a.lines)).toBeGreaterThanOrEqual(3);
+		expect(a.gutter).toEqual(expected(a, 2));
+		await browser.keys(['ArrowDown']);
+		const continuation = await waitSnapshot((x) => x.gutter[2]?.[1] === ' | 0', 'dual cursor on a continuation row');
+		expect(continuation.gutter[2]![0]).toBe('3 | 1');
+		expect(continuation.gutter[2]![2]).toBe(' | 1');
+		const [originalWidth, originalHeight] = await windowSize();
+		try {
+			for (const width of [760, 745, 730]) {
+				await resizeWindow(width, originalHeight);
+				await browser.pause(300);
+				await setCursorLine(2);
+				await waitSnapshot((x) => x.gutter[2]?.[0] === '3 | 0' && measured(x), 'dual rows after a window resize');
+				await browser.keys(['ArrowDown']);
+				const resized = await waitSnapshot((x) => x.gutter[2]?.[1] === ' | 0' && measured(x), 'dual cursor after a window resize');
+				expect(resized.gutter[2]![0]).toBe('3 | 1');
+			}
+		} finally {
+			await resizeWindow(originalWidth, originalHeight);
+			await browser.pause(300);
+		}
+		await setCursorLine(4);
+		const b = await waitSnapshot((x) => x.gutter[4]?.[0] === '5 | 0' && measured(x), 'dual after cursor move');
+		expect(b.gutter).toEqual(expected(b, 4));
+		await command(`${pluginId}:cycle-mode`);
+		await waitSnapshot((x) => x.gutter[2]?.[0] === '3', 'cycle from dual to absolute');
+		await command(`${pluginId}:mode-hybrid`);
+		await command(`${pluginId}:cycle-mode`);
+		await waitSnapshot((x) => x.gutter[4]?.[0] === '5 | 0', 'cycle from hybrid to dual');
+		await configure(FREE);
 	});
 
 	it('the toggle command removes and restores the gutter, the mode commands change the mode', async function () {

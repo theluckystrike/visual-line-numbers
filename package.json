@@ -1,6 +1,6 @@
 {
 	"name": "visual-line-numbers",
-	"version": "1.0.2",
+	"version": "1.1.0",
 	"private": true,
 	"description": "Numbers every wrapped display line in the editor gutter, with relative, hybrid and absolute modes, so counted Vim motions land where the gutter says.",
 	"main": "main.js",

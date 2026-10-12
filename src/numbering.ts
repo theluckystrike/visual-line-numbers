@@ -2,8 +2,8 @@
 // A "unit" is what the editor draws for one block: one document line, or one folded section (a header line that hides lines).
 // A "row" is one drawn display row of a unit. A line that wraps into 3 rows gives a unit with rows 3.
 
-export type NumberMode = 'absolute' | 'relative' | 'hybrid';
-export const MODES: readonly NumberMode[] = ['absolute', 'relative', 'hybrid'];
+export type NumberMode = 'absolute' | 'relative' | 'hybrid' | 'dual';
+export const MODES: readonly NumberMode[] = ['absolute', 'relative', 'hybrid', 'dual'];
 
 export interface Unit {
 	/** Document line number (1-based) of the first line in the unit. */
@@ -64,6 +64,7 @@ export function totalWeight(units: readonly Unit[], countFolded: boolean): numbe
 /** The text of one row for a signed distance from the cursor row. */
 export function rowText(opts: LabelOptions, unit: Unit, rowInUnit: number, distance: number): string {
 	if (opts.mode === 'absolute') return rowInUnit === 0 ? String(unit.line) : '';
+	if (opts.mode === 'dual') return `${rowInUnit === 0 ? unit.line : ''} | ${Math.abs(distance)}`;
 	if (opts.mode === 'hybrid' && distance === 0) return String(opts.cursorLine);
 	return String(Math.abs(distance));
 }

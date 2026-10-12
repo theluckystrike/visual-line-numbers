@@ -865,6 +865,252 @@
      "1"
     ]
    ]
+  },
+  {
+   "name": "dual: two columns with the cursor on the first row",
+   "args": [
+    [
+     {
+      "line": 1,
+      "rows": 3,
+      "hidden": 0
+     },
+     {
+      "line": 2,
+      "rows": 1,
+      "hidden": 0
+     }
+    ],
+    {
+     "mode": "dual",
+     "countFolded": false,
+     "cursorRow": 0,
+     "cursorLine": 1
+    }
+   ],
+   "expected": [
+    [
+     "1 | 0",
+     " | 1",
+     " | 2"
+    ],
+    [
+     "2 | 3"
+    ]
+   ]
+  },
+  {
+   "name": "dual: cursor on a wrapped continuation row",
+   "args": [
+    [
+     {
+      "line": 7,
+      "rows": 4,
+      "hidden": 0
+     },
+     {
+      "line": 8,
+      "rows": 1,
+      "hidden": 0
+     }
+    ],
+    {
+     "mode": "dual",
+     "countFolded": false,
+     "cursorRow": 2,
+     "cursorLine": 7
+    }
+   ],
+   "expected": [
+    [
+     "7 | 2",
+     " | 1",
+     " | 0",
+     " | 1"
+    ],
+    [
+     "8 | 2"
+    ]
+   ]
+  },
+  {
+   "name": "dual: counts above and below the cursor",
+   "args": [
+    [
+     {
+      "line": 1,
+      "rows": 1,
+      "hidden": 0
+     },
+     {
+      "line": 2,
+      "rows": 1,
+      "hidden": 0
+     },
+     {
+      "line": 3,
+      "rows": 2,
+      "hidden": 0
+     }
+    ],
+    {
+     "mode": "dual",
+     "countFolded": false,
+     "cursorRow": 1,
+     "cursorLine": 2
+    }
+   ],
+   "expected": [
+    [
+     "1 | 1"
+    ],
+    [
+     "2 | 0"
+    ],
+    [
+     "3 | 1",
+     " | 2"
+    ]
+   ]
+  },
+  {
+   "name": "dual: a folded section takes one free count",
+   "args": [
+    [
+     {
+      "line": 3,
+      "rows": 1,
+      "hidden": 4
+     },
+     {
+      "line": 8,
+      "rows": 1,
+      "hidden": 0
+     }
+    ],
+    {
+     "mode": "dual",
+     "countFolded": false,
+     "cursorRow": 0,
+     "cursorLine": 3
+    }
+   ],
+   "expected": [
+    [
+     "3 | 0"
+    ],
+    [
+     "8 | 1"
+    ]
+   ]
+  },
+  {
+   "name": "dual: Pro counts hidden lines with both columns",
+   "args": [
+    [
+     {
+      "line": 3,
+      "rows": 1,
+      "hidden": 4
+     },
+     {
+      "line": 8,
+      "rows": 1,
+      "hidden": 0
+     }
+    ],
+    {
+     "mode": "dual",
+     "countFolded": true,
+     "cursorRow": 0,
+     "cursorLine": 3
+    }
+   ],
+   "expected": [
+    [
+     "3 | 0"
+    ],
+    [
+     "8 | 5"
+    ]
+   ]
+  },
+  {
+   "name": "dual: cursor above the viewport",
+   "args": [
+    [
+     {
+      "line": 90,
+      "rows": 2,
+      "hidden": 0
+     },
+     {
+      "line": 91,
+      "rows": 1,
+      "hidden": 0
+     }
+    ],
+    {
+     "mode": "dual",
+     "countFolded": false,
+     "cursorRow": -3,
+     "cursorLine": 87
+    }
+   ],
+   "expected": [
+    [
+     "90 | 3",
+     " | 4"
+    ],
+    [
+     "91 | 5"
+    ]
+   ]
+  },
+  {
+   "name": "dual: cursor below the viewport",
+   "args": [
+    [
+     {
+      "line": 99,
+      "rows": 2,
+      "hidden": 0
+     },
+     {
+      "line": 100,
+      "rows": 1,
+      "hidden": 0
+     }
+    ],
+    {
+     "mode": "dual",
+     "countFolded": false,
+     "cursorRow": 5,
+     "cursorLine": 103
+    }
+   ],
+   "expected": [
+    [
+     "99 | 5",
+     " | 4"
+    ],
+    [
+     "100 | 3"
+    ]
+   ]
+  },
+  {
+   "name": "dual: an empty viewport has no labels",
+   "args": [
+    [],
+    {
+     "mode": "dual",
+     "countFolded": false,
+     "cursorRow": 0,
+     "cursorLine": 1
+    }
+   ],
+   "expected": []
   }
  ]
 }

@@ -39,6 +39,33 @@
 	background-color: var(--background-modifier-hover);
 }
 
+.vln-row.vln-dual {
+	display: grid;
+	grid-template-columns: minmax(3ch, 1fr) auto minmax(3ch, 1fr);
+}
+
+.vln-dual-absolute {
+	color: var(--vln-color-absolute, var(--text-faint));
+}
+
+.vln-dual-separator {
+	padding: 0 var(--size-2-1);
+	color: var(--text-faint);
+	white-space: pre;
+}
+
+.vln-dual-relative {
+	color: var(--vln-color-relative, var(--text-faint));
+}
+
+.vln-cur .vln-dual-relative {
+	color: var(--vln-color-hybrid, var(--text-normal));
+}
+
+.vln-current .vln-dual-relative {
+	color: var(--vln-color-hybrid, var(--text-accent));
+}
+
 /* The editor theme clips each gutter. The hint below must reach into the text area. */
 .cm-editor .cm-gutters .cm-gutter.vln-gutter {
 	overflow: visible;

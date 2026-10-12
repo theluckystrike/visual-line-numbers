@@ -81,6 +81,17 @@ describe('labelUnits distances', () => {
 			for (let k = 1; c - k >= 0 && c + k < total; k++) expect(texts[c - k]).toBe(texts[c + k]);
 		}
 	});
+	it('dual mode keeps relative distances while document numbers stay fixed', () => {
+		const units: Unit[] = [{ line: 98, rows: 3, hidden: 0 }, { line: 99, rows: 2, hidden: 0 }, { line: 100, rows: 1, hidden: 0 }];
+		for (let cursorRow = 0; cursorRow < totalWeight(units, false); cursorRow++) {
+			const options = { countFolded: false, cursorRow, cursorLine: 99 };
+			const dual = labelUnits(units, { ...options, mode: 'dual' });
+			const relative = labelUnits(units, { ...options, mode: 'relative' });
+			expect(dual.map((rows) => rows.map((r) => r.text.split(' | ')[1]))).toEqual(relative.map((rows) => rows.map((r) => r.text)));
+			expect(dual.map((rows) => rows[0]!.text.split(' | ')[0])).toEqual(['98', '99', '100']);
+			expect(dual.flat().map((r) => r.distance)).toEqual(relative.flat().map((r) => r.distance));
+		}
+	});
 });
 
 describe('helpers', () => {

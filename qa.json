@@ -18,6 +18,12 @@
 		"eval": "(async () => { app.plugins.plugins['visual-line-numbers'].pro.signOut(); Object.assign(app.plugins.plugins['visual-line-numbers'].settings, {\"enabled\": true, \"mode\": \"relative\", \"countFolded\": false, \"highlightCurrent\": false, \"motionHint\": false, \"noteProperty\": false, \"colorAbsolute\": \"\", \"colorRelative\": \"\", \"colorHybrid\": \"\"}); app.plugins.plugins['visual-line-numbers'].applySettings(); Object.assign(app.plugins.plugins['visual-line-numbers'].settings, {\"mode\": \"absolute\"}); app.plugins.plugins['visual-line-numbers'].applySettings(); await new Promise((r) => setTimeout(r, 400)); (() => { const e = app.workspace.activeEditor.editor; e.setCursor({line: 2, ch: 0}); e.focus(); })(); await new Promise((r) => setTimeout(r, 800)); return 'ok'; })()"
 	},
 	{
+		"feature": "dual-mode",
+		"caption": "Free dual mode shows document line numbers and wrapped row distances in two columns.",
+		"note": "Long lines.md",
+		"eval": "(async () => { app.plugins.plugins['visual-line-numbers'].pro.signOut(); Object.assign(app.plugins.plugins['visual-line-numbers'].settings, {\"enabled\": true, \"mode\": \"dual\", \"countFolded\": false, \"highlightCurrent\": false, \"motionHint\": false, \"noteProperty\": false, \"colorAbsolute\": \"\", \"colorRelative\": \"\", \"colorHybrid\": \"\"}); app.plugins.plugins['visual-line-numbers'].applySettings(); await new Promise((r) => setTimeout(r, 400)); (() => { const e = app.workspace.activeEditor.editor; e.setCursor({line: 2, ch: 0}); e.focus(); })(); await new Promise((r) => setTimeout(r, 800)); return 'ok'; })()"
+	},
+	{
 		"feature": "fold-aware",
 		"caption": "Pro: with Count folded lines on, each line hidden in a fold takes one count.",
 		"note": "Folded sections.md",

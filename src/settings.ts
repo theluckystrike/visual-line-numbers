@@ -85,6 +85,7 @@ const MODE_OPTIONS: Record<string, string> = {
 	relative: 'Relative: distance from the cursor row',
 	hybrid: 'Hybrid: relative, with the line number on the cursor row',
 	absolute: 'Absolute: the line number on the first row of each line',
+	dual: 'Dual: line numbers on the left, row distances on the right',
 };
 
 const proOff = (): boolean => !isPro();

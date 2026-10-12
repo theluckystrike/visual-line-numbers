@@ -2,8 +2,6 @@
 
 Visual Line Numbers puts a number on every display row of the editor gutter. A long paragraph that wraps onto five rows gets five numbers, not one. In relative and hybrid mode the numbers count rows from the cursor, so a counted Vim motion such as 5gj lands on the row that shows 5.
 
-Core line numbers give a wrapped line one number. If you map j and k to gj and gk, the gutter count does not match the motion. This plugin counts the rows that the editor draws.
-
 <img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/cursor-moves.gif" alt="The numbers in the gutter change as the cursor moves down a note with wrapped paragraphs and back up" width="720">
 
 ## Features
@@ -16,15 +14,21 @@ Relative mode is the default. The row with the cursor shows 0. The rows above an
 
 ### Hybrid mode
 
-Hybrid mode gives the same counts. The cursor row shows the line number of the cursor line instead of 0, as Vim does with both options on. You see where you are in the note and how far each row is.
+Hybrid mode shows the document line number on the cursor row and distances on the other rows.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/hybrid-mode.png" alt="Hybrid numbers with the line number 5 on the cursor row and distances on the other rows" width="720">
 
 ### Absolute mode
 
-Absolute mode shows the line number on the first row of each line. The rows that a long line wraps onto have no number, so the gutter matches the line numbers that other tools and error messages use.
+Absolute mode shows each document line number on its first row. Continuation rows have no number. Use these numbers with other tools and error messages.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/absolute-mode.png" alt="Absolute line numbers on the first row of each line, with no number on the wrapped rows" width="720">
+
+### Both number columns
+
+Dual mode shows document line numbers on the left and row distances on the right. The left column numbers the first row of each line. The right column counts every wrapped row, with 0 on the cursor row. Select Dual in Number mode or run Use dual numbers. This mode is free.
+
+<img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/dual-mode.png" alt="Document line numbers on the left and distances from the cursor on every wrapped row on the right" width="720">
 
 ### Count folded lines (Pro)
 
@@ -66,19 +70,19 @@ To install by hand, copy `main.js`, `manifest.json` and `styles.css` from the la
 
 ## Usage
 
-The gutter is on after you enable the plugin. Open a note in Live Preview or Source mode and look at the left of the text.
+Enable the plugin and open a note in Live Preview or Source mode. The gutter shows next to the text.
 
 The plugin adds these commands to the command palette:
 
 - Toggle the number gutter: turns the gutter on or off.
-- Cycle number mode: goes from absolute to relative to hybrid and back.
-- Use absolute numbers, Use relative numbers, Use hybrid numbers: set one mode.
+- Cycle number mode: goes from absolute to relative to hybrid to dual and back.
+- Use absolute numbers, Use relative numbers, Use hybrid numbers, Use dual numbers: set one mode.
 
-To make counted Vim motions follow the display rows, turn on Vim key bindings in "Settings → Editor" and map j and k to gj and gk. For example, with the community plugin Vimrc Support, add `nmap j gj` and `nmap k gk` to your vimrc file. Then 5j moves five display rows, and the row that shows 5 in the gutter is the row where the cursor lands.
+Turn on Vim key bindings in "Settings → Editor". With Vimrc Support, add `nmap j gj` and `nmap k gk` to your vimrc file. Then 5j moves five display rows to the row that shows the distance 5.
 
 ## Pro
 
-The free version has the gutter, the three modes, the commands and the settings tab.
+The free version has the gutter, the four modes, the commands and the settings tab.
 
 Pro adds counting of folded lines, the per-note property, the current row highlight, the motion hint and a color for each mode. To get it:
 
@@ -93,12 +97,12 @@ The status line then shows your GitHub login and the tier. If you sponsor after 
 | Setting | What it does |
 | --- | --- |
 | Show the gutter | Turns the numbers on or off for all notes. |
-| Number mode | Relative, hybrid or absolute. The default is relative. |
+| Number mode | Relative, hybrid, absolute or dual. The default is relative. |
 | Count folded lines (Pro) | Each line hidden in a fold takes one count. |
 | Per-note property (Pro) | Reads `visual-line-numbers: false` from the properties of a note. |
 | Highlight the current row (Pro) | Bold number and tinted background on the cursor row. |
 | Motion hint (Pro) | Hover text with the Vim motion that reaches a row. |
-| Absolute, relative and hybrid cursor colors (Pro) | A color for each mode. Reset colors goes back to the theme. |
+| Absolute, relative and hybrid cursor colors (Pro) | A color for each mode. Dual uses the absolute and relative colors, and the hybrid cursor color for the 0 on the cursor row. Reset colors goes back to the theme. |
 
 Turn off a Pro setting and the plugin goes back to the free behavior at once. The settings tab also has the Pro section with sign in, status and Refresh.
 
@@ -111,6 +115,10 @@ When the editor draws a line, the plugin asks the editor where each display row 
 ### Are the numbers exact?
 
 On screen, yes: the counts come from the rows that the editor draws. The cursor can be off screen. The editor then has only estimated heights for lines that it has not drawn, so the relative numbers on screen are close but not exact until the cursor line is on screen again. Absolute mode and the cursor line number in hybrid mode are exact, because they come from the document.
+
+### Why is the left column blank on some rows in Dual mode?
+
+Those rows continue a wrapped line. The left column shows its document number only once. The right column shows every row distance.
 
 ### Does a fold count as one row?
 

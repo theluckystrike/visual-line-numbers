@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App } from 'obsidian-test-mocks/obsidian';
 import VisualLineNumbersPlugin from '../src/main';
 import { SPONSORS, bindPro, isPro, onProChange, resetPro } from '../src/pro';
-import { DEFAULT_SETTINGS, effectiveSettings, normalizeSettings } from '../src/settings';
+import { DEFAULT_SETTINGS, VisualLineNumbersSettingTab, effectiveSettings, normalizeSettings } from '../src/settings';
 import manifest from '../manifest.json';
 
 afterEach(() => resetPro());
@@ -42,6 +42,27 @@ describe('settings', () => {
 		const saved = normalizeSettings({ countFolded: true, highlightCurrent: true, motionHint: true, noteProperty: true });
 		expect(effectiveSettings(saved, false)).toEqual({ enabled: true, mode: 'relative', countFolded: false, highlightCurrent: false, motionHint: false, noteProperty: false });
 		expect(effectiveSettings(saved, true)).toEqual({ enabled: true, mode: 'relative', countFolded: true, highlightCurrent: true, motionHint: true, noteProperty: true });
+	});
+
+	it('keeps the saved dual mode after a reload and without Pro', async () => {
+		const app = App.createConfigured__({ files: { 'notes/a.md': '# Hello world' } });
+		const plugin = new VisualLineNumbersPlugin(app as never, manifest as never);
+		plugin.settings = normalizeSettings({ mode: 'dual', countFolded: true });
+		await plugin.saveSettings();
+		const reloaded = new VisualLineNumbersPlugin(app as never, manifest as never);
+		// The mock stores data on each instance. Supply the saved file to the new instance.
+		vi.spyOn(reloaded, 'loadData').mockResolvedValue(structuredClone(await plugin.loadData()));
+		await reloaded.loadSettings();
+		expect(reloaded.settings.mode).toBe('dual');
+		expect(effectiveSettings(reloaded.settings, false)).toMatchObject({ mode: 'dual', countFolded: false });
+	});
+
+	it('offers dual mode in the free number mode setting', () => {
+		const app = App.createConfigured__();
+		const plugin = new VisualLineNumbersPlugin(app as never, manifest as never);
+		const tab = new VisualLineNumbersSettingTab(app as never, plugin);
+		const modes = tab.getSettingDefinitions().find((item) => 'name' in item && item.name === 'Number mode');
+		expect(modes).toMatchObject({ control: { key: 'mode', type: 'dropdown', options: { dual: 'Dual: line numbers on the left, row distances on the right' } } });
 	});
 });
 

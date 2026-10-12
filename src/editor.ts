@@ -48,7 +48,15 @@ class RowsMarker extends GutterMarker {
 	toDOM(): HTMLElement {
 		const box = createDiv({ cls: 'vln-rows' });
 		for (const r of this.rows) {
-			const row = box.createDiv({ cls: r.cls, text: r.text });
+			const row = box.createDiv({ cls: r.cls });
+			if (r.cls.split(' ').includes('vln-dual')) {
+				const [absolute, relative] = r.text.split(' | ');
+				row.createSpan({ cls: 'vln-dual-absolute', text: absolute });
+				row.createSpan({ cls: 'vln-dual-separator', text: ' | ' });
+				row.createSpan({ cls: 'vln-dual-relative', text: relative });
+			} else {
+				row.setText(r.text);
+			}
 			if (r.hint) row.setAttr('data-hint', r.hint);
 		}
 		return box;
@@ -94,7 +102,7 @@ function sameMeasure(a: Map<number, Measured>, b: Measured[]): boolean {
 	if (a.size !== b.length) return false;
 	return b.every((m) => {
 		const o = a.get(m.from);
-		return o !== undefined && o.to === m.to && o.starts.length === m.starts.length && o.hidden === m.hidden;
+		return o !== undefined && o.to === m.to && o.starts.length === m.starts.length && o.hidden === m.hidden && o.starts.every((start, i) => start === m.starts[i]);
 	});
 }
 
@@ -176,7 +184,7 @@ class GutterState {
 		const head = state.selection.main.head;
 		const { units, blocks, rows } = unitsOf(this.view, this.measured);
 		const off = this.noteOff();
-		const key = `${off}|${s.mode}|${s.countFolded}|${s.highlightCurrent}|${s.motionHint}|${head}|${state.doc.length}|${blocks.map((b) => b.from + ':' + b.to).join(',')}|${units.map((u) => u.rows).join('')}`;
+		const key = `${this.version}|${off}|${s.mode}|${s.countFolded}|${s.highlightCurrent}|${s.motionHint}|${head}|${state.doc.length}|${blocks.map((b) => b.from + ':' + b.to).join(',')}|${units.map((u) => u.rows).join('')}`;
 		if (key === this.memoKey) return;
 		this.memoKey = key;
 		this.memo = new Map();
@@ -195,20 +203,26 @@ class GutterState {
 function rowView(r: RowLabel, s: EffectiveSettings): RowView {
 	const current = r.distance === 0;
 	const mode = s.mode === 'absolute' ? 'vln-abs' : s.mode === 'hybrid' && current ? 'vln-hyb' : 'vln-rel';
-	const cls = ['vln-row', mode, current ? 'vln-cur' : '', current && s.highlightCurrent ? 'vln-current' : ''].filter(Boolean).join(' ');
+	const cls = ['vln-row', mode, s.mode === 'dual' ? 'vln-dual' : '', current ? 'vln-cur' : '', current && s.highlightCurrent ? 'vln-current' : ''].filter(Boolean).join(' ');
 	return { text: r.text, hint: s.motionHint && s.mode !== 'absolute' ? motionHint(r.distance) : '', cls };
 }
 
 /** The editor extension: the measuring plugin and the gutter. Register it with Plugin.registerEditorExtension. */
 export function gutterExtension(hooks: EditorHooks): Extension {
 	const plugin = ViewPlugin.define((view) => new GutterState(view, hooks));
+	const spacer = (view: EditorView): RowsMarker => {
+		const digits = '9'.repeat(gutterDigits(view.state.doc.lines));
+		const dual = hooks.settings().mode === 'dual';
+		return new RowsMarker([{ text: dual ? `${digits} | ${digits}` : digits, hint: '', cls: dual ? 'vln-row vln-dual' : 'vln-row vln-rel' }]);
+	};
 	return [
 		plugin,
 		gutter({
 			class: 'vln-gutter',
 			lineMarker: (view, block) => view.plugin(plugin)?.markerFor(block) ?? null,
 			lineMarkerChange: (u) => u.docChanged || u.viewportChanged || u.selectionSet || u.geometryChanged || u.transactions.some((t) => t.effects.some((e) => e.is(refreshEffect))),
-			initialSpacer: (view) => new RowsMarker([{ text: '9'.repeat(gutterDigits(view.state.doc.lines)), hint: '', cls: 'vln-row vln-rel' }]),
+			initialSpacer: spacer,
+			updateSpacer: (_, update) => spacer(update.view),
 		}),
 	];
 }

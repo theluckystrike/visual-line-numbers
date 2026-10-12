@@ -1,5 +1,11 @@
 # visual-line-numbers
 
+## 1.1.0
+
+### Minor Changes
+
+- 7ae3130: Add free dual mode with document line numbers and wrapped row distances in two columns.
+
 ## 1.0.2
 
 ### Patch Changes
