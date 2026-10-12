@@ -1,12 +1,12 @@
 # Visual Line Numbers
 
-Visual Line Numbers puts a number on every display row of the editor gutter. A long paragraph that wraps onto five rows gets five numbers, not one. In relative and hybrid mode the numbers count rows from the cursor, so a counted Vim motion such as 5gj lands on the row that shows 5.
+In relative, hybrid and dual mode, Visual Line Numbers puts a number on each display row in the editor gutter. A long paragraph that wraps onto five rows gets five numbers, not one. In relative and hybrid mode the numbers count rows from the cursor, so a counted Vim motion such as 5gj lands on the row that shows 5.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/cursor-moves.gif" alt="The numbers in the gutter change as the cursor moves down a note with wrapped paragraphs and back up" width="720">
 
 ## Features
 
-### A number on every wrapped row
+### A number on each wrapped row
 
 Relative mode is the default. The row with the cursor shows 0. The rows above and below show how many rows away they are. A paragraph that wraps onto four rows shows four numbers, so you can count rows without counting lines.
 
@@ -20,15 +20,15 @@ Hybrid mode shows the document line number on the cursor row and distances on th
 
 ### Absolute mode
 
-Absolute mode shows each document line number on its first row. Continuation rows have no number. Use these numbers with other tools and error messages.
+Absolute mode shows each document line number on its first row. Continuation rows have no number.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/absolute-mode.png" alt="Absolute line numbers on the first row of each line, with no number on the wrapped rows" width="720">
 
 ### Both number columns
 
-Dual mode shows document line numbers on the left and row distances on the right. The left column numbers the first row of each line. The right column counts every wrapped row, with 0 on the cursor row. Select Dual in Number mode or run Use dual numbers. This mode is free.
+Dual mode shows document line numbers on the left and row distances on the right. The left column numbers the first row of each line. The right column counts each wrapped row, with 0 on the cursor row. This mode is free.
 
-<img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/dual-mode.png" alt="Document line numbers on the left and distances from the cursor on every wrapped row on the right" width="720">
+<img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/dual-mode.png" alt="Document line numbers on the left and distances from the cursor on each wrapped row on the right" width="720">
 
 ### Count folded lines (Pro)
 
@@ -38,19 +38,19 @@ Turn on "Count folded lines" and each line that a fold hides takes one count. Th
 
 ### Highlight the current row (Pro)
 
-The number of the cursor row is shown in bold, in the accent color, with a tinted background.
+The number of the cursor row is shown in bold, with a tinted background. It uses the accent color, or the hybrid cursor color if you chose one.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/current-row.png" alt="The cursor row number highlighted in the gutter in hybrid mode" width="720">
 
 ### Motion hint (Pro)
 
-Hover over a number to see the Vim motion that reaches that row, such as 5gj for a row five rows below the cursor, or 3gk for a row three rows above.
+Hover over a number to see the Vim motion that reaches that row, such as 5gj for a row five rows below the cursor, or 3gk for a row three rows above. Absolute mode shows no hint.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/motion-hint.png" alt="The hint 5gj next to the number 5 in the gutter" width="720">
 
 ### Per-note property (Pro)
 
-Add `visual-line-numbers: false` to the properties of a note to hide the gutter in that note. Every other note keeps its gutter. Use it for notes with long prose, where numbers add noise.
+Add `visual-line-numbers: false` to the properties of a note to hide the gutter in that note. The other notes keep their gutter.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/note-property.png" alt="A note with the property visual-line-numbers set to false" width="720">
 
@@ -66,7 +66,7 @@ Choose one color for absolute numbers, one for relative numbers, and one for the
 2. Select "Browse", search for "Visual Line Numbers", then select "Install" and "Enable".
 3. Open "Settings → Editor" and turn off "Show line numbers". Two gutters of numbers would show together.
 
-To install by hand, copy `main.js`, `manifest.json` and `styles.css` from the latest release into `<vault>/.obsidian/plugins/visual-line-numbers/`. Then enable the plugin. You need Obsidian 1.13.4 or later. The plugin works on desktop and on mobile.
+To install by hand, copy `main.js`, `manifest.json` and `styles.css` from the latest release into `<vault>/.obsidian/plugins/visual-line-numbers/`. Then enable the plugin. You need Obsidian 1.13.4 or later. The automated tests run on desktop only.
 
 ## Usage
 
@@ -90,13 +90,13 @@ Pro adds counting of folded lines, the per-note property, the current row highli
 2. In Obsidian, open the settings of Visual Line Numbers and select "Sign in with GitHub".
 3. The plugin copies a code and opens github.com/login/device. Paste the code there and approve.
 
-The status line then shows your GitHub login and the tier. If you sponsor after you sign in, select Refresh. A negative sponsorship answer turns Pro off. See [Payment, account and network](#payment-account-and-network) for the check and offline limits. Your Pro choices stay saved and work again when Pro is on.
+The status line then shows your GitHub login and the tier. If you sponsor after you sign in, select Refresh. A negative sponsorship answer turns Pro off. See [Payment, account and network](#payment-account-and-network) for the check and offline limits.
 
 ## Settings
 
 | Setting | What it does |
 | --- | --- |
-| Show the gutter | Turns the numbers on or off for all notes. |
+| Show the gutter | Turns the numbers on or off in the editor. |
 | Number mode | Relative, hybrid, absolute or dual. The default is relative. |
 | Count folded lines (Pro) | Each line hidden in a fold takes one count. |
 | Per-note property (Pro) | Reads `visual-line-numbers: false` from the properties of a note. |
@@ -110,23 +110,21 @@ Turn off a Pro setting and the plugin goes back to the free behavior at once. Th
 
 ### How does it count the rows?
 
-When the editor draws a line, the plugin asks the editor where each display row of the line ends, with the public CodeMirror function `EditorView.moveToLineBoundary`. It does this for the lines on screen and nothing else. The plugin changes no Obsidian code and no internal object.
+When the editor draws a line, the plugin asks the editor where each display row of the line ends, with the public CodeMirror function `EditorView.moveToLineBoundary`. It does this only for the lines that the editor draws: the lines on screen and a margin around them. The plugin changes no Obsidian code and no internal object.
 
 ### Are the numbers exact?
 
 On screen, yes: the counts come from the rows that the editor draws. The cursor can be off screen. The editor then has only estimated heights for lines that it has not drawn, so the relative numbers on screen are close but not exact until the cursor line is on screen again. Absolute mode and the cursor line number in hybrid mode are exact, because they come from the document.
 
-### Why is the left column blank on some rows in Dual mode?
-
-Those rows continue a wrapped line. The left column shows its document number only once. The right column shows every row distance.
+A very long line is an exception. The plugin measures up to 400 display rows of one line, and the editor can skip parts of a line with more than 20,000 characters. In these cases, the numbers on that line and the distances past it can be wrong. A table or a callout that Live Preview draws as one block gets no number and counts as one row.
 
 ### Does a fold count as one row?
 
-Yes, by default. A folded section is drawn as one row, so it counts as one. With Pro, "Count folded lines" counts every hidden line as well.
+Yes, by default. A folded section is drawn as one row, so it counts as one. With Pro, "Count folded lines" also counts each hidden line.
 
 ### Does it slow down long notes?
 
-The plugin measures only the lines on screen. It measures again when the note, the scroll position or the window width changes.
+The plugin measures only the lines that the editor draws. It measures again when the note, the scroll position or the window width changes.
 
 ### Does it change my notes or sync data?
 

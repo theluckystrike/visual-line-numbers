@@ -66,6 +66,27 @@ describe('settings', () => {
 	});
 });
 
+describe('pro colors', () => {
+	it('sets and clears the colors in pop-out windows as well as the main window', async () => {
+		const app = App.createConfigured__();
+		const plugin = new VisualLineNumbersPlugin(app as never, manifest as never);
+		const popout = document.implementation.createHTMLDocument('popout');
+		const opened = document.implementation.createHTMLDocument('opened');
+		vi.spyOn(app.workspace, 'iterateAllLeaves').mockImplementation((cb) => cb({ view: { containerEl: { doc: popout } } } as never));
+		await plugin.onload();
+		bindPro(fakeManager(true) as never);
+		plugin.settings = normalizeSettings({ colorRelative: '#112233' });
+		plugin.applySettings();
+		expect(document.body.style.getPropertyValue('--vln-color-relative')).toBe('#112233');
+		expect(popout.body.style.getPropertyValue('--vln-color-relative')).toBe('#112233');
+		app.workspace.trigger('window-open', { doc: opened }, opened.defaultView);
+		expect(opened.body.style.getPropertyValue('--vln-color-relative')).toBe('#112233');
+		plugin.onunload();
+		expect(document.body.style.getPropertyValue('--vln-color-relative')).toBe('');
+		expect(popout.body.style.getPropertyValue('--vln-color-relative')).toBe('');
+	});
+});
+
 describe('pro facade', () => {
 	it('follows the GitHub Sponsors manager and tells listeners on each change', () => {
 		expect(isPro()).toBe(false);

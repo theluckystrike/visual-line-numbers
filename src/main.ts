@@ -40,6 +40,7 @@ export default class VisualLineNumbersPlugin extends Plugin {
 		this.addSettingTab(this.settingTab);
 		this.registerEditorExtension(this.extensions);
 		this.registerEvent(this.app.metadataCache.on('changed', () => refreshAll()));
+		this.registerEvent(this.app.workspace.on('window-open', (win) => this.applyColors([win.doc])));
 		this.addCommand({ id: 'toggle', name: 'Toggle the number gutter', callback: () => void this.update({ enabled: !this.settings.enabled }) });
 		this.addCommand({ id: 'cycle-mode', name: 'Cycle number mode', callback: () => void this.update({ mode: this.nextMode() }) });
 		for (const mode of MODES) {
@@ -96,17 +97,30 @@ export default class VisualLineNumbersPlugin extends Plugin {
 		return this.app.metadataCache.getFileCache(file)?.frontmatter?.[NOTE_PROPERTY] as unknown;
 	}
 
-	/** Pro colors are CSS variables on the body. Without Pro, or with no color chosen, the theme color shows. */
-	private applyColors(): void {
-		for (const [key, name] of COLOR_VARS) {
-			const value = this.settings[key];
-			if (isPro() && typeof value === 'string' && value !== '') document.body.style.setProperty(name, value);
-			else document.body.style.removeProperty(name);
+	/** The main window and each pop-out window. A CSS variable on the body of one window does not reach another window. */
+	private documents(): Set<Document> {
+		const docs = new Set<Document>([document]);
+		this.app.workspace.iterateAllLeaves((leaf) => {
+			docs.add(leaf.view.containerEl.doc);
+		});
+		return docs;
+	}
+
+	/** Pro colors are CSS variables on the body of each window. Without Pro, or with no color chosen, the theme color shows. */
+	private applyColors(docs: Iterable<Document> = this.documents()): void {
+		for (const doc of docs) {
+			for (const [key, name] of COLOR_VARS) {
+				const value = this.settings[key];
+				if (isPro() && typeof value === 'string' && value !== '') doc.body.style.setProperty(name, value);
+				else doc.body.style.removeProperty(name);
+			}
 		}
 	}
 
 	private clearColors(): void {
-		for (const [, name] of COLOR_VARS) document.body.style.removeProperty(name);
+		for (const doc of this.documents()) {
+			for (const [, name] of COLOR_VARS) doc.body.style.removeProperty(name);
+		}
 	}
 
 	async loadSettings(): Promise<void> {

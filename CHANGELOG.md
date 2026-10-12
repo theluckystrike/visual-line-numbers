@@ -1,5 +1,11 @@
 # visual-line-numbers
 
+## 1.1.1
+
+### Patch Changes
+
+- 000edfc: Apply the Pro number colors in pop-out windows and correct the README and manifest claims about wrapped rows, long lines and mobile.
+
 ## 1.1.0
 
 ### Minor Changes
