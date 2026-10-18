@@ -37,6 +37,12 @@ describe('rowStarts', () => {
 });
 
 describe('rowIndexAt', () => {
+	it('keeps a cursor at the end of a wrapped row on that row', () => {
+		expect(rowIndexAt([0, 80, 160], 80, -1)).toBe(0);
+		expect(rowIndexAt([0, 80, 160], 80, 1)).toBe(1);
+		expect(rowIndexAt([0, 80, 160], 160, -1)).toBe(1);
+		expect(rowIndexAt([0, 80, 160], 0, -1)).toBe(0);
+	});
 	it('finds the row that holds an offset', () => {
 		const starts = [0, 80, 160];
 		expect(rowIndexAt(starts, 0)).toBe(0);

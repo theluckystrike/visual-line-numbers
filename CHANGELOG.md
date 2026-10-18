@@ -1,5 +1,11 @@
 # visual-line-numbers
 
+## 1.1.3
+
+### Patch Changes
+
+- e0f14e0: Keep the cursor row count on the correct side of a wrapped line boundary. Refresh document numbers after newline edits above the viewport.
+
 ## 1.1.2
 
 ### Patch Changes

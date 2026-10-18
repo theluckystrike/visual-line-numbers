@@ -8,7 +8,7 @@ In relative, hybrid and dual mode, Visual Line Numbers puts a number on each dis
 
 ### A number on each wrapped row
 
-Relative mode is the default. The row with the cursor shows 0. The rows above and below show how many rows away they are. A paragraph that wraps onto four rows shows four numbers, so you can count rows without counting lines.
+Relative mode is the default. The row with the cursor shows 0. At a wrap boundary, the count follows the side on which the editor places the cursor. The rows above and below show how many rows away they are. A paragraph with four display rows shows four numbers.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/relative-mode.png" alt="Relative numbers in the gutter next to a note with two wrapped paragraphs and a wrapped list item" width="720">
 

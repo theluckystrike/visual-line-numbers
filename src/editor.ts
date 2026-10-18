@@ -98,11 +98,11 @@ function measureViewport(view: EditorView): Measured[] {
 	return out;
 }
 
-function sameMeasure(a: Map<number, Measured>, b: Measured[]): boolean {
+export function sameMeasure(a: Map<number, Measured>, b: Measured[]): boolean {
 	if (a.size !== b.length) return false;
 	return b.every((m) => {
 		const o = a.get(m.from);
-		return o !== undefined && o.to === m.to && o.starts.length === m.starts.length && o.hidden === m.hidden && o.starts.every((start, i) => start === m.starts[i]);
+		return o !== undefined && o.to === m.to && o.line === m.line && o.starts.length === m.starts.length && o.hidden === m.hidden && o.starts.every((start, i) => start === m.starts[i]);
 	});
 }
 
@@ -164,7 +164,7 @@ class GutterState {
 	/** Position of the cursor row from the start of the first unit. Exact when the cursor line is drawn, else an estimate from heights. */
 	private cursorRow(units: Unit[], blocks: readonly BlockInfo[], rows: number[][], head: number, countFolded: boolean): number {
 		const idx = blocks.findIndex((b) => head >= b.from && head <= b.to);
-		if (idx >= 0) return unitStarts(units, countFolded)[idx]! + rowIndexAt(rows[idx]!, head);
+		if (idx >= 0) return unitStarts(units, countFolded)[idx]! + rowIndexAt(rows[idx]!, head, this.view.state.selection.main.assoc);
 		const first = blocks[0];
 		const last = blocks[blocks.length - 1];
 		if (!first || !last) return 0;
@@ -184,7 +184,7 @@ class GutterState {
 		const head = state.selection.main.head;
 		const { units, blocks, rows } = unitsOf(this.view, this.measured);
 		const off = this.noteOff();
-		const key = `${this.version}|${off}|${s.mode}|${s.countFolded}|${s.highlightCurrent}|${s.motionHint}|${head}|${state.doc.length}|${blocks.map((b) => b.from + ':' + b.to).join(',')}|${units.map((u) => u.rows).join('')}`;
+		const key = `${this.version}|${off}|${s.mode}|${s.countFolded}|${s.highlightCurrent}|${s.motionHint}|${head}|${state.selection.main.assoc}|${state.doc.length}|${blocks.map((b) => b.from + ':' + b.to).join(',')}|${units.map((u) => u.rows).join('')}`;
 		if (key === this.memoKey) return;
 		this.memoKey = key;
 		this.memo = new Map();

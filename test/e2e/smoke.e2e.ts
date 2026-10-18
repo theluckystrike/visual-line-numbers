@@ -118,12 +118,12 @@ async function openFolded(): Promise<Snapshot> {
 	await obsidianPage.openFile(FOLDS);
 	await waitHeadings(FOLDS, 4);
 	await setCursorLine(2);
-	await command('editor:unfold-all');
+	await browser.executeObsidian(({ app }) => app.workspace.activeEditor?.editor?.exec('unfoldAll'));
 	const open = await waitSnapshot((x) => x.lines.length >= 15, 'unfolded note not drawn');
 	let rows = open.lines.length;
 	for (const line of [4, 11]) {
 		await setCursorLine(line);
-		await command('editor:toggle-fold');
+		await browser.executeObsidian(({ app }) => app.workspace.activeEditor?.editor?.exec('toggleFold'));
 		const next = await waitSnapshot((x) => x.lines.length < rows, `fold at line ${line + 1} not drawn`);
 		rows = next.lines.length;
 	}
@@ -351,6 +351,6 @@ describe(`${pluginId} in the real app`, function () {
 		await configure(FREE);
 		await waitSnapshot((x) => x.current === 0 && x.hints === 0, 'Pro features should switch off after sign out');
 		await obsidianPage.openFile(FOLDS);
-		await command('editor:unfold-all');
+		await browser.executeObsidian(({ app }) => app.workspace.activeEditor?.editor?.exec('unfoldAll'));
 	});
 });

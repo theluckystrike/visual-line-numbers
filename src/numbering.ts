@@ -103,11 +103,11 @@ export function rowStarts(lineStart: number, lineEnd: number, nextRowEnd: (pos: 
 	return starts;
 }
 
-/** Index of the row that holds offset pos, given the row starts of one line. */
-export function rowIndexAt(starts: readonly number[], pos: number): number {
+/** Index of the cursor row. A negative association keeps a wrap boundary on the preceding row. */
+export function rowIndexAt(starts: readonly number[], pos: number, assoc = 1): number {
 	let idx = 0;
 	for (let i = 0; i < starts.length; i++) {
-		if (starts[i]! <= pos) idx = i;
+		if (starts[i]! < pos || (starts[i] === pos && (i === 0 || assoc >= 0))) idx = i;
 		else break;
 	}
 	return idx;
