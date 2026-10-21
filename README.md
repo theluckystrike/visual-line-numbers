@@ -26,7 +26,7 @@ Absolute mode shows each document line number on its first row. Continuation row
 
 ### Both number columns
 
-Dual mode shows document line numbers on the left and row distances on the right. The left column numbers the first row of each line. The right column counts each wrapped row, with 0 on the cursor row. This mode is free.
+Dual mode shows document line numbers on the left and row distances on the right. The left column numbers the first row of each line. The right column counts each wrapped row, with 0 on the cursor row.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/dual-mode.png" alt="Document line numbers on the left and distances from the cursor on each wrapped row on the right" width="720">
 
@@ -86,18 +86,20 @@ The free version has the gutter, the four modes, the commands and the settings t
 
 Pro adds counting of folded lines, the per-note property, the current row highlight, the motion hint and a color for each mode. To get it:
 
-1. Sponsor [theluckystrike on GitHub Sponsors](https://github.com/sponsors/theluckystrike) with $5 a month, or $15 once. A total payment of $15 meets the payment requirement for Pro without further payment. Sign-in and the checks below still apply.
+1. Sponsor [theluckystrike on GitHub Sponsors](https://github.com/sponsors/theluckystrike) with $5 a month, or $15 once.
 2. In Obsidian, open the settings of Visual Line Numbers and select "Sign in with GitHub".
 3. The plugin copies a code and opens github.com/login/device. Paste the code there and approve.
 
-The status line then shows your GitHub login and the tier. If you sponsor after you sign in, select Refresh. A negative sponsorship answer turns Pro off. See [Payment, account and network](#payment-account-and-network) for the check and offline limits.
+The status line then shows your GitHub login and the tier. If you sponsor after you sign in, select Refresh. See [Payment, account and network](#payment-account-and-network) for the check and offline limits.
 
 ## Settings
+
+After a minor or major update, this plugin opens one What's new tab in the background. The tab and settings card suggest other NoteMods plugins and Zovo Chat and link to notemods.com for feedback ([privacy](https://notemods.com/privacy/)). The tab sends no data. Turn the tab off in Settings.
 
 | Setting | What it does |
 | --- | --- |
 | Show the gutter | Turns the numbers on or off in the editor. |
-| Number mode | Relative, hybrid, absolute or dual. The default is relative. |
+| Number mode | Relative, hybrid, absolute or dual. |
 | Count folded lines (Pro) | Each line hidden in a fold takes one count. |
 | Per-note property (Pro) | Reads `visual-line-numbers: false` from the properties of a note. |
 | Highlight the current row (Pro) | Bold number and tinted background on the cursor row. |
@@ -110,7 +112,7 @@ Turn off a Pro setting and the plugin goes back to the free behavior at once. Th
 
 ### How does it count the rows?
 
-When the editor draws a line, the plugin asks the editor where each display row of the line ends, with the public CodeMirror function `EditorView.moveToLineBoundary`. It does this only for the lines that the editor draws: the lines on screen and a margin around them. The plugin changes no Obsidian code and no internal object.
+When the editor draws a line, the plugin asks the editor where each display row of the line ends, with the public CodeMirror function `EditorView.moveToLineBoundary`. It does this only for the lines that the editor draws: the lines on screen and a margin around them. It measures again when the note, the scroll position or the window width changes. The plugin changes no Obsidian code and no internal object.
 
 ### Are the numbers exact?
 
@@ -118,17 +120,9 @@ On screen, yes: the counts come from the rows that the editor draws. The cursor 
 
 A very long line is an exception. The plugin measures up to 400 display rows of one line, and the editor can skip parts of a line with more than 20,000 characters. In these cases, the numbers on that line and the distances past it can be wrong. A table or a callout that Live Preview draws as one block gets no number and counts as one row.
 
-### Does a fold count as one row?
-
-Yes, by default. A folded section is drawn as one row, so it counts as one. With Pro, "Count folded lines" also counts each hidden line.
-
-### Does it slow down long notes?
-
-The plugin measures only the lines that the editor draws. It measures again when the note, the scroll position or the window width changes.
-
 ### Does it change my notes or sync data?
 
-No. The settings are in `data.json` in the plugin folder. The GitHub token for Pro, if you sign in, is in the secret storage of Obsidian on that device.
+No. The settings are in `data.json` in the plugin folder.
 
 ## Payment, account and network
 

@@ -3,6 +3,7 @@ import { sponsorsSettingItems } from './license/github-obsidian';
 import { MODES, type NumberMode } from './numbering';
 import { PRO_UI, isPro } from './pro';
 import type VisualLineNumbersPlugin from './main';
+import { helloSettingItems } from './hello/settings';
 
 export interface VisualLineNumbersSettings {
 	/** Gutter on or off for the whole app. */
@@ -99,6 +100,11 @@ export class VisualLineNumbersSettingTab extends PluginSettingTab {
 	}
 
 	getSettingDefinitions(): SettingDefinitionItem[] {
+		// The product rows, then the "More from NoteMods" card (packages/hello).
+		return [...this.productSettingDefinitions(), ...helloSettingItems()];
+	}
+
+	productSettingDefinitions(): SettingDefinitionItem[] {
 		return [
 			...(this.plugin.pro ? sponsorsSettingItems(this.plugin.pro, PRO_UI) : []),
 			{
