@@ -1,5 +1,11 @@
 # visual-line-numbers
 
+## 1.2.1
+
+### Patch Changes
+
+- de41529: Count folded lines, Per-note property, Highlight the current row, Motion hint and the number colors now show how to get Pro, with a Sponsor on GitHub button, when you select them. Nothing is saved.
+
 ## 1.2.0
 
 ### Minor Changes

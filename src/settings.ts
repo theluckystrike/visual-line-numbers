@@ -1,7 +1,7 @@
 import { PluginSettingTab, Setting, type SettingDefinitionItem } from 'obsidian';
 import { sponsorsSettingItems } from './license/github-obsidian';
 import { MODES, type NumberMode } from './numbering';
-import { PRO_UI, isPro } from './pro';
+import { PRO_UI, isPro, proNotice } from './pro';
 import type VisualLineNumbersPlugin from './main';
 import { helloSettingItems } from './hello/settings';
 
@@ -89,7 +89,19 @@ const MODE_OPTIONS: Record<string, string> = {
 	dual: 'Dual: line numbers on the left, row distances on the right',
 };
 
-const proOff = (): boolean => !isPro();
+/** The lead of the Pro notice for each Pro option. A free user can select these options; the notice tells how to get Pro. */
+export const PRO_LEADS: Readonly<Record<string, string>> = {
+	countFolded: 'Count folded lines is a Pro option.',
+	noteProperty: 'The per-note property is a Pro option.',
+	highlightCurrent: 'Highlight the current row is a Pro option.',
+	motionHint: 'The motion hint is a Pro option.',
+	colorAbsolute: 'Number colors are a Pro option.',
+	colorRelative: 'Number colors are a Pro option.',
+	colorHybrid: 'Number colors are a Pro option.',
+};
+
+/** A color picker can send many changes in one drag. Show one notice for each key in this time. */
+const NOTICE_GAP_MS = 2000;
 
 export class VisualLineNumbersSettingTab extends PluginSettingTab {
 	plugin: VisualLineNumbersPlugin;
@@ -124,37 +136,37 @@ export class VisualLineNumbersSettingTab extends PluginSettingTab {
 					{
 						name: 'Count folded lines',
 						desc: 'Pro. Each line hidden in a fold takes one count, so relative numbers match the document lines. Off: a fold counts as the one row you see.',
-						control: { type: 'toggle', key: 'countFolded', defaultValue: DEFAULT_SETTINGS.countFolded, disabled: proOff },
+						control: { type: 'toggle', key: 'countFolded', defaultValue: DEFAULT_SETTINGS.countFolded },
 					},
 					{
 						name: 'Per-note property',
 						desc: 'Pro. Add visual-line-numbers: false to the properties of a note to hide the gutter in that note.',
-						control: { type: 'toggle', key: 'noteProperty', defaultValue: DEFAULT_SETTINGS.noteProperty, disabled: proOff },
+						control: { type: 'toggle', key: 'noteProperty', defaultValue: DEFAULT_SETTINGS.noteProperty },
 					},
 					{
 						name: 'Highlight the current row',
 						desc: 'Pro. Show the number of the cursor row in bold with a tinted background.',
-						control: { type: 'toggle', key: 'highlightCurrent', defaultValue: DEFAULT_SETTINGS.highlightCurrent, disabled: proOff },
+						control: { type: 'toggle', key: 'highlightCurrent', defaultValue: DEFAULT_SETTINGS.highlightCurrent },
 					},
 					{
 						name: 'Motion hint',
 						desc: 'Pro. Hover a number to see the Vim motion that reaches the row, such as 5gj or 3gk.',
-						control: { type: 'toggle', key: 'motionHint', defaultValue: DEFAULT_SETTINGS.motionHint, disabled: proOff },
+						control: { type: 'toggle', key: 'motionHint', defaultValue: DEFAULT_SETTINGS.motionHint },
 					},
 					{
 						name: 'Absolute number color',
 						desc: 'Pro. Color of the numbers in absolute mode.',
-						control: { type: 'color', key: 'colorAbsolute', defaultValue: '#808080', disabled: proOff },
+						control: { type: 'color', key: 'colorAbsolute', defaultValue: '#808080' },
 					},
 					{
 						name: 'Relative number color',
 						desc: 'Pro. Color of the numbers in relative mode, and of the other rows in hybrid mode.',
-						control: { type: 'color', key: 'colorRelative', defaultValue: '#808080', disabled: proOff },
+						control: { type: 'color', key: 'colorRelative', defaultValue: '#808080' },
 					},
 					{
 						name: 'Hybrid cursor number color',
 						desc: 'Pro. Color of the line number on the cursor row in hybrid mode.',
-						control: { type: 'color', key: 'colorHybrid', defaultValue: '#808080', disabled: proOff },
+						control: { type: 'color', key: 'colorHybrid', defaultValue: '#808080' },
 					},
 					{
 						name: 'Reset colors',
@@ -177,7 +189,34 @@ export class VisualLineNumbersSettingTab extends PluginSettingTab {
 		];
 	}
 
+	private lastNotice = new Map<string, number>();
+
+	getControlValue(key: string): unknown {
+		// A free user sees the values in effect: Pro toggles off and the theme color. The stored choice stays for the
+		// time that Pro comes back.
+		if (PRO_LEADS[key] !== undefined && !isPro()) {
+			if (key.startsWith('color')) return '';
+			return effectiveSettings(this.plugin.settings, false)[key as keyof EffectiveSettings];
+		}
+		return super.getControlValue(key);
+	}
+
 	async setControlValue(key: string, value: unknown): Promise<void> {
+		const lead = PRO_LEADS[key];
+		if (lead !== undefined && !isPro()) {
+			// A free user selected a Pro option: tell how to get Pro and save nothing.
+			const now = Date.now();
+			if (now - (this.lastNotice.get(key) ?? 0) >= NOTICE_GAP_MS) {
+				this.lastNotice.set(key, now);
+				proNotice(lead);
+			}
+			// Obsidian does not draw a control again while it has the focus. Move the focus out, then draw the tab
+			// again, so the row shows the value in effect.
+			const active = this.containerEl.ownerDocument.activeElement as HTMLElement | null;
+			if (active && this.containerEl.contains(active)) active.blur();
+			this.update();
+			return;
+		}
 		await super.setControlValue(key, value);
 		this.plugin.settings = normalizeSettings(this.plugin.settings);
 		this.plugin.applySettings();
