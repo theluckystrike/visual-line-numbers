@@ -1,5 +1,5 @@
 import { PluginSettingTab, Setting, type SettingDefinitionItem } from 'obsidian';
-import { sponsorsSettingItems } from './license/github-obsidian';
+import { sponsorsSettingItems, redrawKeepFocus } from './license/github-obsidian';
 import { MODES, type NumberMode } from './numbering';
 import { PRO_UI, isPro, proNotice } from './pro';
 import type VisualLineNumbersPlugin from './main';
@@ -212,9 +212,7 @@ export class VisualLineNumbersSettingTab extends PluginSettingTab {
 			}
 			// Obsidian does not draw a control again while it has the focus. Move the focus out, then draw the tab
 			// again, so the row shows the value in effect.
-			const active = this.containerEl.ownerDocument.activeElement as HTMLElement | null;
-			if (active && this.containerEl.contains(active)) active.blur();
-			this.update();
+			redrawKeepFocus(this);
 			return;
 		}
 		await super.setControlValue(key, value);
