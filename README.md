@@ -4,6 +4,16 @@ In relative, hybrid and dual mode, Visual Line Numbers puts a number on each dis
 
 <img src="https://raw.githubusercontent.com/theluckystrike/visual-line-numbers/HEAD/docs/cursor-moves.gif" alt="The numbers in the gutter change as the cursor moves down a note with wrapped paragraphs and back up" width="720">
 
+## Quick start
+
+Paste this into a note:
+
+```text
+This is one long paragraph. The editor wraps it onto more than one row when the pane is narrow. Each row of it gets its own number in the gutter.
+```
+
+Enable the plugin and open a note in Live Preview or Source mode. The gutter shows next to the text. A long paragraph that wraps onto five rows gets five numbers, not one.
+
 ## Features
 
 ### A number on each wrapped row
@@ -86,7 +96,7 @@ The free version has the gutter, the four modes, the commands and the settings t
 
 Pro adds counting of folded lines, the per-note property, the current row highlight, the motion hint and a color for each mode. To get it:
 
-1. Sponsor [theluckystrike on GitHub Sponsors](https://github.com/sponsors/theluckystrike) with $5 a month, or $15 once.
+1. Sponsor [theluckystrike on GitHub Sponsors](https://github.com/sponsors/theluckystrike?frequency=one-time&metadata_source=visual-line-numbers) with $5 a month, or $15 once.
 2. In Obsidian, open the settings of Visual Line Numbers and select "Sign in with GitHub".
 3. The plugin copies a code and opens github.com/login/device. Paste the code there and approve.
 
@@ -128,7 +138,7 @@ No. The settings are in `data.json` in the plugin folder.
 
 The core features are free. Pro features need a GitHub Sponsors sponsorship of theluckystrike: $5 a month or more, or $15 once. A total payment of $15 meets the payment requirement for Pro without further payment. Sign-in and the checks below still apply. Your notes stay readable and editable with or without Pro.
 
-GitHub handles the payment. Sponsor at https://github.com/sponsors/theluckystrike. You need no account for the free features. Pro needs the GitHub account that sponsors.
+GitHub handles the payment. Sponsor at https://github.com/sponsors/theluckystrike?frequency=one-time&metadata_source=visual-line-numbers. You need no account for the free features. Pro needs the GitHub account that sponsors.
 
 Until you select "Sign in with GitHub" in the settings, Visual Line Numbers makes no network requests. Sign in uses the GitHub device flow. Visual Line Numbers sends its public client ID and the scope `read:user` to `https://github.com/login/device/code` and shows you a code. While you enter the code at https://github.com/login/device, it asks `https://github.com/login/oauth/access_token` every few seconds to check the sign-in status. The scope permits profile reads only. GitHub needs this access to show the sponsorship tier. It grants no repository scope and no write access.
 
