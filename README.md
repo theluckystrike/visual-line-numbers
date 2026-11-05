@@ -97,8 +97,8 @@ The free version has the gutter, the four modes, the commands and the settings t
 Pro adds counting of folded lines, the per-note property, the current row highlight, the motion hint and a color for each mode. To get it:
 
 1. Sponsor [theluckystrike on GitHub Sponsors](https://github.com/sponsors/theluckystrike?frequency=one-time&metadata_source=visual-line-numbers) with $5 a month, or $15 once.
-2. In Obsidian, open the settings of Visual Line Numbers and select "Sign in with GitHub".
-3. The plugin copies a code and opens github.com/login/device. Paste the code there and approve.
+2. Open the settings of Visual Line Numbers and select "Sign in with GitHub".
+3. Paste the code at github.com/login/device and approve.
 
 The status line then shows your GitHub login and the tier. If you sponsor after you sign in, select Refresh. See [Payment, account and network](#payment-account-and-network) for the check and offline limits.
 
@@ -137,6 +137,8 @@ No. The settings are in `data.json` in the plugin folder.
 ## Payment, account and network
 
 The core features are free. Pro features need a GitHub Sponsors sponsorship of theluckystrike: $5 a month or more, or $15 once. A total payment of $15 meets the payment requirement for Pro without further payment. Sign-in and the checks below still apply. Your notes stay readable and editable with or without Pro.
+
+[One payment turns on Pro in every NoteMods plugin](https://notemods.com/pro/).
 
 GitHub handles the payment. Sponsor at https://github.com/sponsors/theluckystrike?frequency=one-time&metadata_source=visual-line-numbers. You need no account for the free features. Pro needs the GitHub account that sponsors.
 
