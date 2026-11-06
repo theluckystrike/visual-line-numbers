@@ -1,9 +1,9 @@
 {
 	"id": "visual-line-numbers",
 	"name": "Visual Line Numbers",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"changes": [
-		"When the settings refuse a Pro choice, for example in Highlight the current row, the keyboard focus now stays on that setting."
+		"The Pro notice of Visual Line Numbers now says that one payment turns on Pro in every NoteMods plugin."
 	],
 	"tip": "In Vim mode, type 5gj to go to the row that shows 5. With Vimrc Support, nmap j gj makes 5j do the same.",
 	"thanks": "Hi, I am Michael, a solo developer in Poland. Visual Line Numbers is one of over 100 small plugins that I make. Thank you for keeping it in your editor.",

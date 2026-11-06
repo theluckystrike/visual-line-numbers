@@ -107,7 +107,7 @@ describe('Pro options in the settings tab', () => {
 			throw new Error(`No Pro notice after the free user selected Count folded lines. ${await diagnose()}`);
 		}
 		const notice = (await notices()).find((n) => n.text.includes(LEAD))!;
-		expect(notice.text).toContain(`${LEAD} Sponsor on GitHub, then sign in from the plugin settings.`);
+		expect(notice.text).toContain(`${LEAD} One payment turns on Pro in every NoteMods plugin. Sponsor on GitHub, then sign in from the plugin settings.`);
 		expect(notice.buttons).toBe(1);
 		expect(await saved()).toEqual({ live: false, disk: false });
 		// The toggle shows the saved value again.
