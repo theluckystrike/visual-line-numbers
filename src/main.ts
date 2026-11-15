@@ -103,7 +103,7 @@ export default class VisualLineNumbersPlugin extends Plugin {
 
 	/** The main window and each pop-out window. A CSS variable on the body of one window does not reach another window. */
 	private documents(): Set<Document> {
-		const docs = new Set<Document>([document]);
+		const docs = new Set<Document>([this.app.workspace.containerEl.doc]);
 		this.app.workspace.iterateAllLeaves((leaf) => {
 			docs.add(leaf.view.containerEl.doc);
 		});

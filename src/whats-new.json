@@ -1,7 +1,7 @@
 {
 	"id": "visual-line-numbers",
 	"name": "Visual Line Numbers",
-	"version": "1.2.3",
+	"version": "1.2.4",
 	"changes": [
 		"The Pro notice of Visual Line Numbers now says that one payment turns on Pro in every NoteMods plugin."
 	],
